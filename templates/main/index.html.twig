@@ -35,7 +35,7 @@
             }
             }) }}
         </div>
-        <button type="submit" onclick="alert('Datos enviados!');">Guardar</button>
+        <button type="submit">Guardar</button>
 
 {{ form_end(form) }}
 
@@ -163,6 +163,12 @@ $(document).ready(function() {
         bInfo: true,
         buttons: configurarBotones()
     });
+     $('#miFormulario').submit(function(e) {
+            e.preventDefault();
+            alert('Datos enviados!');
+            this.submit();
+            
+        });
 });
 
     </script>

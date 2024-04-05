@@ -1,0 +1,171 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}FAMOSOS{% endblock %}
+
+{% block body %}
+<div class="example-wrapper">
+<h1>LISTADO DE FAMOSOS✅</h1>
+{{ form_start(form, {
+                'attr': {
+                    'id': 'miFormulario'
+                    }}) }}
+
+       <div>
+            {{ form_label(form.nombre) }}
+           {{ form_widget(form.nombre, {
+            'attr': {
+                'required': 'required'
+            }
+            }) }}
+
+        </div>
+
+        <div>
+            {{ form_label(form.apellido) }}
+            {{ form_widget(form.apellido, {'attr': {
+                'required': 'required'
+            }
+            }) }}
+        </div>
+
+        <div>
+            {{ form_label(form.profesion) }}
+            {{ form_widget(form.profesion, {'attr': {
+                'required': 'required'
+            }
+            }) }}
+        </div>
+        <button type="submit" onclick="alert('Datos enviados!');">Guardar</button>
+
+{{ form_end(form) }}
+
+    <h1>DATOS ALMACENADOS ✅</h1>
+    <table id="famososTabla">
+    <thead>
+    <th>NOMBRE</th>
+    <th>APELLIDO</th>
+    <th>PROFESION</th>
+    <th> EDITAR</th>
+    <th> BORRAR </th> 
+    </thead>
+    <tbody>
+      {% for famoso in famosos %}
+    <tr>
+        <td>{{ famoso.nombre }}</td>
+        <td>{{ famoso.Apellido }}</td>
+        <td>{{ famoso.profesion }}</td>
+        <td id="btn">  <button ><a href="{{ path('famosos_edit', {'id': famoso.id}) }}">Editar</a></button></td>
+        <td id="btn">  <button onclick="return confirmDelete('{{ famoso.nombre }}')">
+                            <a href="{{ path('famosos_delete', {'id': famoso.id}) }}">Borrar</a></button></td>                     
+    </tr>
+        {% endfor %} 
+    </tbody>
+
+    </table>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+    function confirmDelete(nombre) {
+    return confirm('¿Estás seguro? Esta acción irá a borrar el dato "' + nombre + '".');
+        }
+        window.addEventListener('DOMContentLoaded', (event) => {
+            const firstInput = document.querySelector('input');
+            if(firstInput) {
+                firstInput.focus();
+            }
+        });
+
+function configurarBotones() {
+    return [
+        {
+            extend: 'excelHtml5',
+            text: 'Exportar a Excel',
+            title: 'Datos de Famosos',
+            exportOptions: {
+                columns: [0, 1, 2]
+            }
+        },
+        {
+            extend: 'pdfHtml5',
+            text: 'Exportar a PDF',
+            title: 'Datos de Famosos',
+            orientation: 'portrait',
+            pageSize: 'A4',
+            exportOptions: {
+                columns: [0, 1, 2]
+            },
+            customize: function(doc) {
+                // Centrar la tabla en la página PDF
+                var docContent = doc.content[1];
+                docContent.margin = [ 0, 0, 0, 0 ]; // [left, top, right, bottom]
+                docContent.table.widths = Array(docContent.table.body[0].length + 1).join('*').split('');
+                // En ese apartado se puede ajustar para cambiar la posición de la tabla horizontalmente
+                docContent.layout = {
+                    hLineWidth: function(i, node) {
+                        return 0.5;
+                    },
+                    vLineWidth: function(i, node) {
+                        return 0.5;
+                    },
+                    hLineColor: function(i, node) {
+                        return '#aaa';
+                    },
+                    vLineColor: function(i, node) {
+                        return '#aaa';
+                    },
+                    paddingLeft: function(i, node) {
+                        return 4;
+                    },
+                    paddingRight: function(i, node) {
+                        return 4;
+                    },
+                    paddingTop: function(i, node) {
+                        return 2;
+                    },
+                    paddingBottom: function(i, node) {
+                        return 2;
+                    }
+                };
+            }
+        },
+        {
+            extend: 'print',
+            text: 'Imprimir',
+            title: 'Datos de Famosos',
+            exportOptions: {
+                columns: [0, 1, 2]
+            }
+        },
+        {
+            extend: 'copy',
+            text: 'Copiar',
+            exportOptions: {
+                columns: [0, 1, 2]
+            }
+        }
+    ];
+}
+
+
+$(document).ready(function() {
+    $('#famososTabla').DataTable({
+        dom: 'Bfrtip',
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json'
+        },
+        bPaginate: true,
+        bFilter: true,
+        bInfo: true,
+        buttons: configurarBotones()
+    });
+});
+
+    </script>
+{% endblock %}
+
+

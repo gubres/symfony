@@ -1,0 +1,29 @@
+{# templates/Famosos/edit.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}EDITARO DATOS DEL FAMOSO{% endblock %}
+
+{% block body %}
+<h1>Editar Famoso</h1>
+<div class="example-wrapper">
+{{ form_start(form) }}
+        <div>
+            {{ form_label(form.nombre) }}
+            {{ form_widget(form.nombre, {'attr': {'required': 'required'}}) }}
+        </div>
+
+        <div>
+            {{ form_label(form.apellido) }}
+            {{ form_widget(form.apellido, {'attr': {'required': 'required'}}) }}
+        </div>
+
+        <div>
+            {{ form_label(form.profesion) }}
+            {{ form_widget(form.profesion, {'attr': {'required': 'required'}}) }}
+        </div>
+    <button class="btn btn-primary">Guardar cambios</button>
+    <button class="btn btn-primary"><a href="{{ path('app_main') }}">Cancelar </a></button>
+
+{{ form_end(form) }}
+</div>
+{% endblock %}

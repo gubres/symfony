@@ -16,14 +16,11 @@ class DeleteController extends AbstractController
     #[Route('/{id}', name: 'famosos_delete', methods: ['GET'])]
     public function delete(Request $request, Famosos $famoso, EntityManagerInterface $entityManager): Response
     {
-    // Establece el campo `eliminado` a true
+    // Establece el campo 'eliminado' a true
     $famoso->setEliminado(true);
-
-    // No es necesario llamar a $entityManager->persist($famoso);
-    // ya que la entidad ya está siendo gestionada por Doctrine.
     $entityManager->flush();
 
-    // Redirige al usuario a donde necesites después de realizar la acción
+    // Redirige al usuario a la pagina principal
     return $this->redirectToRoute('app_main');
     }
 }

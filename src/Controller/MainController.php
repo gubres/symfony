@@ -33,7 +33,7 @@ class MainController extends AbstractController
         }
 
         // Obtener todos los registros de famosos no eliminados para mostrar en la página principal
-        // Asegurarse de que el repositorio tenga un método `findNotDeleted` que filtre por el campo `eliminado`
+        // El Famososrepository tiene el método `findNotDeleted` que filtra por el campo 'eliminado'
             return $this->render('main/index.html.twig', [
                 'famosos' => $entityManager->getRepository(Famosos::class)->findNotDeleted(),
                 'form' => $form->createView(),

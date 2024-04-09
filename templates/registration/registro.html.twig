@@ -23,5 +23,10 @@
    {% for message in app.flashes('error') %}
     <div class="alert alert-danger">{{ message }}</div>
     {% endfor %}
+    
+  
+    <div class="register">
+        ¿Ya tienes una cuenta? <a style="color:blue" href="{{ path('app_login') }}">Iniciar sesión</a>
+    </div>
 </div>
 {% endblock %}

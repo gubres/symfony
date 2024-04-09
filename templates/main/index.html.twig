@@ -5,14 +5,14 @@
 {% block body %}
 
 <div class="example-wrapper">
-{% if is_granted('IS_AUTHENTICATED_FULLY') %}
-    <p>Bienvenido {{ app.user.email }}</p>
-{% endif %}
 
-{% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-    <form action="{{ path('app_logout') }}" method="post" class="justify-end">
+{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+    <div class="flex justify-end">
+    <p>Bienvenido {{ app.user.email }}</p>
+    <form action="{{ path('app_logout') }}" method="post">
         <button type="submit" class="btn btn-logout">Logout</button>
     </form>
+    </div>
 {% endif %}
 
 <h1>LISTADO DE FAMOSOS✅</h1>

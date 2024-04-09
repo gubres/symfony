@@ -8,17 +8,29 @@
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
 
-       <form action="{{ path('app_login') }}" method="post" class="example-wrapper">
+        {% if app.user %}
+            <div class="mb-3 example-wrapper">
+                You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+        
+            <div class="register-link">
+        <a style="color:blue" href="{{ path('app_main') }}">Ir a la pagina principal</a>
+             </div>
+            
+                <br>
+             <div>
+             No eres {{ app.user.userIdentifier }}?
+      
+              <form action="{{ path('app_logout') }}" method="post" class="justify-end">
+                 <button type="submit" class="btn btn-logout">Logout</button>
+            </form>
+            </div>
+             </div>
+        {% endif %}
+        {% if not app.user %}
+         <form action="{{ path('app_login') }}" method="post" class="example-wrapper">
         {% if error %}
             <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
         {% endif %}
-
-        {% if app.user %}
-            <div class="mb-3">
-                You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
-            </div>
-        {% endif %}
-
         <h1 class="h3 mb-3 font-weight-normal">Por favor, inicia sesión</h1>
         <label for="username">Email</label>
         <input type="email" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="email" required autofocus>
@@ -43,5 +55,6 @@
         ¿No tienes una cuenta? <a style="color:blue" href="{{ path('app_register') }}">Regístrate aquí</a>
     </div>
     </form>
+        {% endif %}
     
 {% endblock %}

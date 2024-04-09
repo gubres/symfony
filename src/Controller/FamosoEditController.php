@@ -15,7 +15,7 @@ use DateTime;
 
 class FamosoEditController extends AbstractController
 {
-    #[Route('/Famosos/edit/{id}', name: 'famosos_edit', methods: ['GET', 'POST'])]
+    #[Route('/editar/{id}', name: 'famosos_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Famosos $famoso, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(FamososType::class, $famoso);
@@ -29,7 +29,7 @@ class FamosoEditController extends AbstractController
             return $this->redirectToRoute('app_main');
         }
 
-        return $this->render('Famosos/edit.html.twig', [
+        return $this->render('main/editar.html.twig', [
             'famoso' => $famoso,
             'form' => $form->createView(),
         ]);

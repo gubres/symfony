@@ -119,7 +119,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     // El método eraseCredentials modificado para incluir plainPassword
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
+        //limpia datos temporales de la memoria
         $this->plainPassword = null;
     }
 }

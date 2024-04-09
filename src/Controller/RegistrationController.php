@@ -13,7 +13,7 @@ use App\Form\RegistrationFormType;
 
 class RegistrationController extends AbstractController
 {
-    #[Route('/registration/index', name: 'app_register')]
+    #[Route('registro', name: 'app_register')]
     public function register(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager): Response
     {
         
@@ -30,7 +30,7 @@ class RegistrationController extends AbstractController
                 return $this->redirectToRoute('app_register');
             }
 
-            // Copia la contraseña a un textoplano y la codifica.
+            // Copia la contraseña a un textoplano y la hashed
             $user->setPassword($passwordHasher->hashPassword($user, $form->get('plainPassword')->getData()));
             
             $entityManager->persist($user);
@@ -41,7 +41,7 @@ class RegistrationController extends AbstractController
             // Redirige al usuario al inicio
             return $this->redirectToRoute('app_login');
         }
-        return $this->render('registration/index.html.twig', [
+        return $this->render('registration/registro.html.twig', [
             'form' => $form->createView(),
         ]);
     }

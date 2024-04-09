@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class MainController extends AbstractController
 {
-    #[Route('/main/index', name: 'app_main')]
+    #[Route('home', name: 'app_main')]
     public function index(Request $request, EntityManagerInterface $entityManager): Response
     {
         // Crear una nueva entidad Famosos para el formulario

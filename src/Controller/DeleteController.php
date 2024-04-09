@@ -15,7 +15,7 @@ use DateTimeZone;
 
 class DeleteController extends AbstractController
 {
-    #[Route('/{id}', name: 'famosos_delete', methods: ['GET'])]
+    #[Route('main/index/{id}', name: 'famosos_delete', methods: ['GET'])]
     public function delete(Request $request, Famosos $famoso, EntityManagerInterface $entityManager): Response
     {
     // Establece el campo 'eliminado' a true

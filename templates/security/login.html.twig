@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inciar sesión!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+       <form action="{{ path('app_login') }}" method="post" class="example-wrapper">
+        {% if error %}
+            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
+
+        {% if app.user %}
+            <div class="mb-3">
+                You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+            </div>
+        {% endif %}
+
+        <h1 class="h3 mb-3 font-weight-normal">Por favor, inicia sesión</h1>
+        <label for="username">Email</label>
+        <input type="email" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="email" required autofocus>
+        <label for="password">Password</label>
+
+        <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" required>
+    
+        <input type="hidden" name="_csrf_token"
+               value="{{ csrf_token('authenticate') }}"
+        >
+
+    <div id="checkbox">
+   Recuérdame
+    <input type="checkbox" id="remember_me" name="_remember_me" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+    </div>
+        
+        <button class="btn btn-lg btn-primary" type="submit">
+           Iniciar sesión
+        </button>
+         {# Enlace al formulario de registro #}
+    <div class="register-link">
+        ¿No tienes una cuenta? <a style="color:blue" href="{{ path('app_register') }}">Regístrate aquí</a>
+    </div>
+    </form>
+    
+{% endblock %}

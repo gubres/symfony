@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Registro{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+    <h2>Registro</h2>
+    {{ form_start(form, {'attr': {'id': 'miFormulario'}}) }}
+    
+    {{ form_row(form.email, {'label': 'Correo electrónico'}) }}
+    {{ form_row(form.plainPassword.first, {'label': 'Contraseña'}) }}
+    {{ form_row(form.plainPassword.second, {'label': 'Confirma tu contraseña'}) }}
+    
+    <button type="submit" class="btn">Registrar</button>
+    
+    {{ form_end(form) }}
+    
+   {% for message in app.flashes('error') %}
+    <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endblock %}

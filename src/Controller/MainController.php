@@ -71,8 +71,8 @@ public function index(EntityManagerInterface $entityManager): Response
                 'nombre' => $famoso->getNombre(),
                 'apellido' => $famoso->getApellido(),
                 'profesion' => $famoso->getProfesion(),
-                'editar' => '<button class="btn btn-info"><a href="' . $this->generateUrl('famosos_edit', ['id' => $famoso->getId()]) . '">Editar</a></button>',
-                'borrar' => '<button class="btn btn-danger"><a href="' . $this->generateUrl('famosos_delete', ['id' => $famoso->getId()]) . '" onclick="return confirmDelete(\'' . $famoso->getNombre() . '\')">Borrar</a></button>'
+                'editar' => '<a href="' . $this->generateUrl('famosos_edit', ['id' => $famoso->getId()]) . '" class="btn btn-primary">Editar</a>',
+                'borrar' => '<a href="' . $this->generateUrl('famosos_delete', ['id' => $famoso->getId()]) . '" class="btn btn-danger" onclick="return confirmDelete(\'' . $famoso->getNombre() . '\')">Borrar</a>'
             ];
         }
     

@@ -20,6 +20,7 @@ class DeleteController extends AbstractController
     {
     // Establece el campo 'eliminado' a true
     $famoso->setEliminado(true);
+    //cambia el campo modificado con la fecha actual
     $famoso->setModificado(new DateTime('now', new DateTimeZone('Europe/Madrid')));
     $entityManager->flush();
 

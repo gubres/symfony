@@ -105,7 +105,7 @@ class Famosos
         return $this;
     }
 
-    public function getEliminado(): ?bool
+    public function isEliminado(): ?bool
     {
         return $this->eliminado;
     }
@@ -140,27 +140,5 @@ class Famosos
         $this->creado = $creado;
 
         return $this;
-    }
-    
-     /**
-     * @ORM\PrePersist
-     */
-    public function prePersist(): void
-    {
-        if (!$this->creado) {
-            
-            $this->creado = new DateTimeImmutable();
-        }
-        if (!$this->modificado) {
-            $this->modificado = new DateTime();
-        }
-    }
-
-    /**
-     * @ORM\PreUpdate
-     */
-    public function preUpdate(): void
-    {
-        $this->modificado = new DateTime();
     }
 }

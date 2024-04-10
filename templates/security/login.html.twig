@@ -10,7 +10,7 @@
 
         {% if app.user %}
             <div class="mb-3 example-wrapper">
-                You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+                Ya ha iniciado sesión como  {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
         
             <div class="register-link">
         <a style="color:blue" href="{{ path('app_main') }}">Ir a la pagina principal</a>

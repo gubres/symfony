@@ -15,74 +15,69 @@
     </div>
 {% endif %}
 
-<h1>LISTADO DE FAMOSOS✅</h1>
-{{ form_start(form, {
-                'attr': {
-                    'id': 'miFormulario'
-                    }}) }}
 
-       <div>
-            {{ form_label(form.nombre) }}
-           {{ form_widget(form.nombre, {
-            'attr': {
-                'required': 'required'
-            }
-            }) }}
+{% block modales %}
 
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#miModal">
+    Insertar Datos
+</button>
+{# Ventana Modal con Formulario #}
+<div class="modal fade" id="miModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Insertar Nuevo Famoso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">          
+                    {% include '/main/formulario.html.twig' %}   
+            </div>
         </div>
+    </div>
+</div>
 
-        <div>
-            {{ form_label(form.apellido) }}
-            {{ form_widget(form.apellido, {'attr': {
-                'required': 'required'
-            }
-            }) }}
-        </div>
-
-        <div>
-            {{ form_label(form.profesion) }}
-            {{ form_widget(form.profesion, {'attr': {
-                'required': 'required'
-            }
-            }) }}
-        </div>
-        <button type="submit">Guardar</button>
-
-{{ form_end(form) }}
-
-    <h1>DATOS ALMACENADOS ✅</h1>
-    <table id="famososTabla">
-    <thead>
-    <th>NOMBRE</th>
-    <th>APELLIDO</th>
-    <th>PROFESION</th>
-    <th> EDITAR</th>
-    <th> BORRAR </th> 
-    </thead>
-    <tbody>
-      {% for famoso in famosos %}
-    <tr>
-        <td>{{ famoso.nombre }}</td>
-        <td>{{ famoso.Apellido }}</td>
-        <td>{{ famoso.profesion }}</td>
-        <td id="btn">  <button ><a href="{{ path('famosos_edit', {'id': famoso.id}) }}">Editar</a></button></td>
-        <td id="btn">  <button onclick="return confirmDelete('{{ famoso.nombre }}')">
-                            <a href="{{ path('famosos_delete', {'id': famoso.id}) }}">Borrar</a></button></td>                     
-    </tr>
-        {% endfor %} 
-    </tbody>
-
-    </table>
+                <div class="modal-body">
+                    {% include '/main/datostabla.html.twig' %}
+                </div>
+{% endblock %}
 </div>
 
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-
     <script>
+    document.addEventListener('DOMContentLoaded', function () {
+  document.getElementById('miFormulario').addEventListener('submit', function (e) {
+    e.preventDefault(); // Previene el envío normal del formulario
+
+    // Prepara los datos del formulario para enviar
+    const formData = new FormData(this);
+
+    // Realiza la petición fetch
+    fetch('/main/formulario', {
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+      if(data.success) {
+        // Aquí puedes cerrar la ventana modal y recargar la tabla de DataTables
+        $('#miModal').modal('hide'); // Cierra modal (Bootstrap example)
+        $('#famososTabla').DataTable().ajax.reload(); // Recarga DataTables
+      } else {
+        // Manejo de errores o validaciones del formulario
+        alert('Hubo un error al procesar el formulario');
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+  });
+});
+
     function confirmDelete(nombre) {
-    return confirm('¿Estás seguro? Esta acción irá a borrar el dato "' + nombre + '".');
+    return confirm('¿Está seguro? Esta acción irá borrar el dato "' + nombre + '".');
         }
         window.addEventListener('DOMContentLoaded', (event) => {
             const firstInput = document.querySelector('input');
@@ -98,7 +93,7 @@ function configurarBotones() {
             text: 'Exportar a Excel',
             title: 'Datos de Famosos',
             exportOptions: {
-                columns: [0, 1, 2]
+                columns: [0, 1, 2, 3]
             }
         },
         {
@@ -108,7 +103,7 @@ function configurarBotones() {
             orientation: 'portrait',
             pageSize: 'A4',
             exportOptions: {
-                columns: [0, 1, 2]
+                columns: [0, 1, 2, 3]
             },
             customize: function(doc) {
                 // Centrar la tabla en la página PDF
@@ -149,14 +144,14 @@ function configurarBotones() {
             text: 'Imprimir',
             title: 'Datos de Famosos',
             exportOptions: {
-                columns: [0, 1, 2]
+                columns: [0, 1, 2, 3]
             }
         },
         {
             extend: 'copy',
             text: 'Copiar',
             exportOptions: {
-                columns: [0, 1, 2]
+                columns: [0, 1, 2, 3]
             }
         }
     ];
@@ -164,16 +159,24 @@ function configurarBotones() {
 
 
 $(document).ready(function() {
-    $('#famososTabla').DataTable({
-        dom: 'Bfrtip',
+     $('#famososTabla').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "ajax": "{{ path('datos_tabla') }}",
+        "columns": [
+            { "data": "id" },
+            { "data": "nombre" },
+            { "data": "apellido" },
+            { "data": "profesion" },
+            { "data": "editar", "orderable": false },
+            { "data": "borrar", "orderable": false }
+            ],
         language: {
             url: '//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json'
-        },
-        bPaginate: true,
-        bFilter: true,
-        bInfo: true,
+        },  dom: '<"top"lBf>rt<"bottom"ip><"clear">',
         buttons: configurarBotones()
     });
+
      $('#miFormulario').submit(function(e) {
             e.preventDefault();
             alert('Datos enviados!');

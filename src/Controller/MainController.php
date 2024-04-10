@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class MainController extends AbstractController
 {
-    #[Route('home', name: 'app_main')]
+    #[Route('/home', name: 'app_main')]
 public function index(EntityManagerInterface $entityManager): Response
 {
     // Obtener todos los registros de famosos no eliminados para mostrar en la página principal.

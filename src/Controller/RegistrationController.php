@@ -13,7 +13,7 @@ use App\Form\RegistrationFormType;
 
 class RegistrationController extends AbstractController
 {
-    #[Route('registro', name: 'app_register')]
+    #[Route('/registro', name: 'app_register')]
     public function register(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager): Response
     {
         

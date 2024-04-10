@@ -8,53 +8,49 @@
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
 
-        {% if app.user %}
-            <div class="mb-3 example-wrapper">
-                Ya ha iniciado sesión como  {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+    {% if app.user %}
+        <div class="mb-3 example-wrapper">
+                Ya ha iniciado sesión como  {{ app.user.userIdentifier }}
         
             <div class="register-link">
-        <a style="color:blue" href="{{ path('app_main') }}">Ir a la pagina principal</a>
-             </div>
+                <a style="color:blue" href="{{ path('app_main') }}">Ir a la pagina principal</a>
+            </div>
             
                 <br>
-             <div>
+            <div>
              No eres {{ app.user.userIdentifier }}?
       
-              <form action="{{ path('app_logout') }}" method="post" class="justify-end">
-                 <button type="submit" class="btn btn-logout">Logout</button>
-            </form>
+                <form action="{{ path('app_logout') }}" method="post" class="justify-end">
+                    <button type="submit" class="btn btn-secondary">Logout</button>
+                </form>
             </div>
-             </div>
-        {% endif %}
-        {% if not app.user %}
-         <form action="{{ path('app_login') }}" method="post" class="example-wrapper">
-        {% if error %}
-            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-        {% endif %}
-        <h1 class="h3 mb-3 font-weight-normal">Por favor, inicia sesión</h1>
-        <label for="username">Email</label>
-        <input type="email" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="email" required autofocus>
-        <label for="password">Password</label>
+        </div>
+    {% endif %}
 
-        <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" required>
-    
-        <input type="hidden" name="_csrf_token"
-               value="{{ csrf_token('authenticate') }}"
-        >
+    {% if not app.user %}
+        <form action="{{ path('app_login') }}" method="post" class="example-wrapper">
+            {% if error %}
+                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+            <h1 class="h3 mb-3 font-weight-normal">Por favor, inicia sesión</h1>
+            <label for="username">Email</label>
+            <input type="email" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="email" required autofocus>
+            
+            <label for="password">Password</label>
+            <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" required>
+            
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-    <div id="checkbox">
-   Recuérdame
-    <input type="checkbox" id="remember_me" name="_remember_me" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-    </div>
-        
-        <button class="btn btn-lg btn-primary" type="submit">
-           Iniciar sesión
-        </button>
+            <div id="checkbox"> Recuérdame
+                <input type="checkbox" id="remember_me" name="_remember_me" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+            </div>
+            <button class="btn btn-lg btn-primary" type="submit"> Iniciar sesión </button>
+         
          {# Enlace al formulario de registro #}
-    <div class="register-link">
-        ¿No tienes una cuenta? <a style="color:blue" href="{{ path('app_register') }}">Regístrate aquí</a>
-    </div>
-    </form>
-        {% endif %}
+            <div class="register-link">
+                ¿No tienes una cuenta? <a style="color:blue" href="{{ path('app_register') }}">Regístrate aquí</a>
+            </div>
+        </form>
+    {% endif %}
     
 {% endblock %}

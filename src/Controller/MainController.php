@@ -10,6 +10,7 @@ use App\Form\FamososType;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 
 class MainController extends AbstractController
@@ -32,10 +33,17 @@ public function index(EntityManagerInterface $entityManager): Response
 }
 
     #[Route('/main/formulario', name: 'form_datos', methods: ['POST'])]
-    public function rellenarFormulario(Request $request, EntityManagerInterface $entityManager): JsonResponse {
+    public function rellenarFormulario(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator): JsonResponse {
         $famoso = new Famosos();
         $form = $this->createForm(FamososType::class, $famoso);
+
         $form->handleRequest($request);
+
+        $errors = $validator->validate($famoso);
+    
+        if (count($errors) > 0) {
+            return new JsonResponse(['success' => false, 'message' => (string) $errors]);
+        }
     
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($famoso);

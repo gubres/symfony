@@ -25,24 +25,24 @@ class Famosos
     #[ORM\Column(length: 30)]
     #[Assert\NotBlank(message: "El campo no puede estar vacío")]
     #[Assert\Regex(
-        pattern: "/^[a-zA-Z]+(\s[a-zA-Z]+)*$/",
-        message: "El nombre debe ser alfabético"
+        pattern: "/^[A-Za-z\s]+$/",
+        message: "El nombre solo puede contener letras y espacios"
     )]
      private ?string $nombre = null;
 
      #[ORM\Column(length: 30)]
      #[Assert\NotBlank(message: "El campo no puede estar vacío")]
      #[Assert\Regex(
-         pattern: "/^[a-zA-Z]+(\s[a-zA-Z]+)*$/",
-         message: "El apellido debe ser alfabético"
+        pattern: "/^[A-Za-z\s]+$/",
+        message: "El apellido solo puede contener letras y espacios"
      )]
       private ?string $apellido = null;
 
     #[ORM\Column(length: 30)]
     #[Assert\NotBlank(message: "El campo no puede estar vacío")]
     #[Assert\Regex(
-        pattern: "/^[a-zA-Z]+(\s[a-zA-Z]+)*$/",
-        message: "La profesion debe ser alfabético"
+        pattern: "/^[A-Za-z\s]+$/",
+        message: "La profesion solo puede contener letras y espacios"
     )]
 
     private ?string $profesion = null;

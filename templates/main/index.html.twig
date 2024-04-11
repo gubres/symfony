@@ -57,15 +57,15 @@
                     <input type="hidden" name="id" id="id_famoso">
                     <div class="mb-3">
                         <label for="inputNombre">Nombre</label>
-                        <input type="text" class="form-control" name="nombre" id="inputNombre">
+                        <input type="text" class="form-control" name="nombre" id="inputNombre" required>
                     </div>
                     <div class="mb-3">
                         <label for="inputApellido">Apellido</label>
-                        <input type="text" class="form-control" name="apellido" id="inputApellido">
+                        <input type="text" class="form-control" name="apellido" id="inputApellido" required>
                     </div>
                     <div class="mb-3">
                         <label for="inputProfesion">Profesion</label>
-                        <input type="text" class="form-control" name="profesion" id="inputProfesion">
+                        <input type="text" class="form-control" name="profesion" id="inputProfesion" required>
                     </div>
                 </form>
             </div>
@@ -100,7 +100,7 @@ $(document).ready(function() {
     });
 
     $('#editarModal').on('show.bs.modal', function(e) {
-        // Resetea el formulario completo para poder visualizar el nuevo dato
+        // Resetea el formulario de edicion completamente para poder visualizar el nuevo dato
         $('#editarForm  ').trigger('reset');
     });
 
@@ -135,6 +135,21 @@ $(document).ready(function() {
     $('#editarForm').on('submit', function(e) {
         e.preventDefault();
 
+        var nombre = $('#inputNombre').val().trim();
+        var apellido = $('#inputApellido').val().trim();
+        var profesion = $('#inputProfesion').val().trim();
+        
+        // una regex para validar que el texto contenga solo letras y espacios
+        var regex = /^[A-Za-z\s]+$/;
+        
+        if (!nombre || !apellido || !profesion) {
+            alert('Todos los campos son obligatorios.');
+            return;
+        }
+        if (!regex.test(nombre) || !regex.test(apellido) || !regex.test(profesion)) {
+            alert('Nombre, apellido y profesión solo deben contener letras y espacios.');
+            return;
+        }
         const famosoId = $('#id_famoso').val();
         const formData = new FormData(this);
 
@@ -160,27 +175,43 @@ $(document).ready(function() {
 });
 
 
-    //funcion para la insercion de un nuevo famoso
-    document.addEventListener('DOMContentLoaded', function () {
+    $(document).ready(function() {
+    // Función para la inserción de un nuevo famoso
     document.getElementById('confirmarEnvio').addEventListener('click', function (e) {
-        e.preventDefault(); 
-        
+        e.preventDefault();
+
+        // Validación de los campos
+        let nombre = $("#miModal form").find("input[name*='nombre']").val().trim();
+        let apellido = $("#miModal form").find("input[name*='apellido']").val().trim();
+        let profesion = $("#miModal form").find("input[name*='profesion']").val().trim();
+
+        // regex para validar que los campos contengan solo letras y espacios
+        let regex = /^[A-Za-z\s]+$/;
+
+        if (!nombre || !apellido || !profesion) {
+            alert('Todos los campos son obligatorios.');
+            return;
+        }
+
+        if (!regex.test(nombre) || !regex.test(apellido) || !regex.test(profesion)) {
+            alert('Nombre, apellido y profesión solo deben contener letras y espacios.');
+            return;
+        }
+
         const formData = new FormData(document.querySelector('#miModal form'));
-    
-        fetch('{{ path('form_datos') }}', {
+
+        fetch('{{ path("form_datos") }}', {
             method: 'POST',
             body: formData,
         })
         .then(response => response.json())
         .then(data => {
             if(data.success) {
-                $('#miModal').modal('hide'); // Cierra la modal de formulario
+                $('#miModal').modal('hide'); 
                 mostrarModalConfirmacion('Los datos han sido enviados exitosamente.');
-                $('#famososTabla').DataTable().ajax.reload(); // Recarga DataTables
-                 $('#miFormulario').trigger('reset');
-               
+                $('#famososTabla').DataTable().ajax.reload();
             } else {
-                $('#miModal').modal('hide'); // Cierra la modal de formulario
+                $('#miModal').modal('hide');
                 mostrarModalConfirmacion('Error al enviar los datos. Por favor, intente nuevamente.');
             }
         })
@@ -189,6 +220,8 @@ $(document).ready(function() {
             mostrarModalConfirmacion('Error al enviar los datos. Por favor, intente nuevamente.');
         });
     });
+
+    // Otras funciones...
 });
 
     function mostrarModalConfirmacion(mensaje) {
@@ -201,9 +234,6 @@ $(document).ready(function() {
         }
         window.addEventListener('DOMContentLoaded', (event) => {
             const firstInput = document.querySelector('input');
-            if(firstInput) {
-                firstInput.focus();
-            }
         });
 
 function configurarBotones() {

@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Famosos;
 use App\Form\FamososType;
-use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,10 +18,9 @@ class MainController extends AbstractController
 public function index(EntityManagerInterface $entityManager): Response
 {
     // Obtener todos los registros de famosos no eliminados para mostrar en la página principal.
-    // Asumiendo que el método `findNotDeleted()` está implementado en el repositorio de Famosos para filtrar por el campo 'eliminado'.
+    // el método `findNotDeleted()` está implementado en el repositorio de Famosos para filtrar por el campo 'eliminado'.
     $famosos = $entityManager->getRepository(Famosos::class)->findNotDeleted();
 
-    // Crea una nueva instancia de la entidad Famosos para el formulario.
     $famoso = new Famosos();
     $form = $this->createForm(FamososType::class, $famoso);
 
@@ -71,7 +69,7 @@ public function index(EntityManagerInterface $entityManager): Response
                 'nombre' => $famoso->getNombre(),
                 'apellido' => $famoso->getApellido(),
                 'profesion' => $famoso->getProfesion(),
-                'editar' => '<a href="' . $this->generateUrl('famosos_edit', ['id' => $famoso->getId()]) . '" class="btn btn-primary">Editar</a>',
+                'editar' => '<button class="btn btn-primary editarBtn" data-bs-toggle="modal" data-bs-target="#editarModal" data-id="' . $famoso->getId() . '">Editar</button>',
                 'borrar' => '<a href="' . $this->generateUrl('famosos_delete', ['id' => $famoso->getId()]) . '" class="btn btn-danger" onclick="return confirmDelete(\'' . $famoso->getNombre() . '\')">Borrar</a>'
             ];
         }

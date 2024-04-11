@@ -21,7 +21,7 @@
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#miModal">
     Insertar Datos
 </button>
-{# Ventana Modal con Formulario #}
+{# Ventana Modal con Formulario para insertar datos#}
 <div class="modal fade" id="miModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -36,7 +36,7 @@
                     {% include '/main/formulario.html.twig' %}   
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <button type="submit" id="confirmarEnvio" class="btn btn-primary">Confirmar</button>
                {{ form_end(form) }}
             </div>
@@ -44,9 +44,41 @@
     </div>
 </div>
 
-                <div class="modal-body">
-                    {% include '/main/datostabla.html.twig' %}
-                </div>
+
+{# Ventana Modal con Formulario para actualizar datos #}
+<div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>EDITAR FAMOSO✅</h3>
+            </div>
+            <div class="modal-body" id="editarModalBody">
+                <form id="editarForm" action="javascript:void(0);" method="post">
+                    <input type="hidden" name="id" id="id_famoso">
+                    <div class="mb-3">
+                        <label for="inputNombre">Nombre</label>
+                        <input type="text" class="form-control" name="nombre" id="inputNombre">
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputApellido">Apellido</label>
+                        <input type="text" class="form-control" name="apellido" id="inputApellido">
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputProfesion">Profesion</label>
+                        <input type="text" class="form-control" name="profesion" id="inputProfesion">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" form="editarForm" class="btn btn-primary">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-body">
+     {% include '/main/datostabla.html.twig' %}
+</div>
 {% endblock %}
 </div>
 
@@ -55,12 +87,86 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
+
+$(document).ready(function() {
+     $('#miModal').on('show.bs.modal', function(e) {
+        // Resetea el formulario completo dejando sin datos
+        $('#miFormulario').trigger('reset');
+    });
+
+    // cuando el modal está completamente abierto enfoca el primer campo
+    $('#miModal').on('shown.bs.modal', function(e) {
+        $('#miFormulario input:first').focus();
+    });
+
+    $('#editarModal').on('show.bs.modal', function(e) {
+        // Resetea el formulario completo para poder visualizar el nuevo dato
+        $('#editarForm  ').trigger('reset');
+    });
+
+
+    // ese evento carga los datos del famoso en el formulario
+    $(document).on('click', '.editarBtn', function() {
+        const famosoId = $(this).data('id');
+        const url = `/info/${famosoId}`;
+
+        // aqui se hace una solicitud para obtener los datos del famoso
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // aqui se rellena el formulario con los datos obtenidos
+                $('#id_famoso').val(data.id);
+                $('#inputNombre').val(data.nombre);
+                $('#inputApellido').val(data.apellido);
+                $('#inputProfesion').val(data.profesion);
+
+                // se muestra la ventana modal con el formulario rellenado
+                $('#editarModal').modal('show');
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+    // Manejo del evento de envío del formulario de edición
+    $('#editarForm').on('submit', function(e) {
+        e.preventDefault();
+
+        const famosoId = $('#id_famoso').val();
+        const formData = new FormData(this);
+
+        fetch(`/editar/${famosoId}`, {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                $('#editarModal').modal('hide');
+                alert('Famoso actualizado con éxito.');
+                $('#famososTabla').DataTable().ajax.reload();
+            } else {
+                alert('Hubo un error al actualizar el famoso.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al enviar los datos. Intente nuevamente.');
+        });
+    });
+});
+
+
+    //funcion para la insercion de un nuevo famoso
     document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('confirmarEnvio').addEventListener('click', function (e) {
-        e.preventDefault(); // Previene el envío normal del formulario
+        e.preventDefault(); 
         
         const formData = new FormData(document.querySelector('#miModal form'));
-
+    
         fetch('{{ path('form_datos') }}', {
             method: 'POST',
             body: formData,
@@ -71,6 +177,8 @@
                 $('#miModal').modal('hide'); // Cierra la modal de formulario
                 mostrarModalConfirmacion('Los datos han sido enviados exitosamente.');
                 $('#famososTabla').DataTable().ajax.reload(); // Recarga DataTables
+                 $('#miFormulario').trigger('reset');
+               
             } else {
                 $('#miModal').modal('hide'); // Cierra la modal de formulario
                 mostrarModalConfirmacion('Error al enviar los datos. Por favor, intente nuevamente.');
@@ -83,11 +191,9 @@
     });
 });
 
-function mostrarModalConfirmacion(mensaje) {
-    // Aquí puedes definir cómo quieres mostrar el mensaje de confirmación.
-    // Por ejemplo, podrías insertar el mensaje en una modal existente o crear una nueva modal dinámicamente.
-    alert(mensaje); // Ejemplo básico con alert, reemplazar con tu modal de confirmación.
-}
+    function mostrarModalConfirmacion(mensaje) {
+        alert(mensaje); 
+    }
 
 
     function confirmDelete(nombre) {
@@ -194,6 +300,12 @@ $(document).ready(function() {
      $('#miFormulario').submit(function(e) {
             e.preventDefault();
             alert('Datos enviados!');
+            this.submit();
+            
+        });
+    $('#editarFormulario').submit(function(e) {
+            e.preventDefault();
+            alert('Datos actualizados!');
             this.submit();
             
         });

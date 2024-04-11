@@ -1,0 +1,28 @@
+       <div>
+           {{ form_label(form.nombre) }}
+           {{ form_widget(form.nombre, {
+            'attr': {
+                'required': 'required'
+            }
+            }) }}
+
+        </div>
+
+        <div>
+            {{ form_label(form.apellido) }}
+            {{ form_widget(form.apellido, {'attr': {
+                'required': 'required'
+            }
+            }) }}
+        </div>
+
+        <div>
+            {{ form_label(form.profesion) }}
+            {{ form_widget(form.profesion, {'attr': {
+                'required': 'required'
+            }
+            }) }}
+        </div>
+         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" id="confirmarEnvio" class="btn btn-primary">Confirmar</button>
+               

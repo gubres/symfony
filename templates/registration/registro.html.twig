@@ -6,7 +6,12 @@
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
+         {% for message in app.flashes('error') %}
+                <div class="alert alert-danger">{{ message }}</div>
+         {% endfor %}
             <h2 class="mb-3">Registro</h2>
+           
+
             {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': ''}}) }}
             
             <div class="form-group">
@@ -33,10 +38,6 @@
             <button type="submit" class="btn btn-primary btn-block">Registrar</button>
             
             {{ form_end(form) }}
-            
-            {% for message in app.flashes('error') %}
-                <div class="alert alert-danger">{{ message }}</div>
-            {% endfor %}
             
             <div class="mt-4">
                 ¿Ya tienes una cuenta? <a href="{{ path('app_login') }}" class="link-primary">Iniciar sesión</a>

@@ -23,7 +23,7 @@ class AccessDeniedListener
     public function onKernelException(ExceptionEvent $event)
     {
         $exception = $event->getThrowable();
-        dump($exception);
+
         if ($exception instanceof AccessDeniedHttpException || $exception instanceof AccessDeniedException) {
             // Agrega un mensaje de error a la sesión para mostrarlo más tarde
             $this->session->getFlashBag()->add('error', 'No está autorizado para acceder a esta página.');

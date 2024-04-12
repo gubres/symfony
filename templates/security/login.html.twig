@@ -16,8 +16,10 @@
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <form action="{{ path('app_login') }}" method="post">
-                    {% if error %}
-                        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                   {% if error_message %}
+                        <div class="alert alert-danger">
+                            {{ error_message }}
+                        </div>
                     {% endif %}
                     <h1 class="h3 mb-3 font-weight-normal">Por favor, inicia sesión</h1>
                     <div class="form-group mb-3">

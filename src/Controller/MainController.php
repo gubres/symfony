@@ -18,44 +18,46 @@ class MainController extends AbstractController
     #[Route('/home', name: 'app_main')]
 public function index(EntityManagerInterface $entityManager): Response
 {
-    // Obtener todos los registros de famosos no eliminados para mostrar en la página principal.
+    // obtiene todos los registros de famosos no eliminados para mostrar en la página principal.
     // el método `findNotDeleted()` está implementado en el repositorio de Famosos para filtrar por el campo 'eliminado'.
     $famosos = $entityManager->getRepository(Famosos::class)->findNotDeleted();
 
     $famoso = new Famosos();
     $form = $this->createForm(FamososType::class, $famoso);
 
-    // Renderiza la página con la tabla de famosos y el formulario vacío listo para ser utilizado en la ventana modal.
     return $this->render('main/index.html.twig', [
         'famosos' => $famosos,
         'form' => $form->createView(),
     ]);
 }
 
-    #[Route('/main/formulario', name: 'form_datos', methods: ['POST'])]
-    public function rellenarFormulario(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator): JsonResponse {
-        $famoso = new Famosos();
-        $form = $this->createForm(FamososType::class, $famoso);
+#[Route('/main/formulario', name: 'form_datos', methods: ['POST'])]
+public function rellenarFormulario(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator): JsonResponse {
+    $famoso = new Famosos();
+    $form = $this->createForm(FamososType::class, $famoso);
+    $form->handleRequest($request);
 
-        $form->handleRequest($request);
-
+    if ($form->isSubmitted()) {
         $errors = $validator->validate($famoso);
     
         if (count($errors) > 0) {
-            return new JsonResponse(['success' => false, 'message' => (string) $errors]);
+            $errorsString = (string) $errors;
+            return new JsonResponse(['success' => false, 'message' => $errorsString]);
         }
     
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isValid()) {
             $entityManager->persist($famoso);
             $entityManager->flush();
-            
+        
             return new JsonResponse(['success' => true]);
         }
-    
-        return new JsonResponse(['success' => false], Response::HTTP_BAD_REQUEST);
     }
+
+    return new JsonResponse(['success' => false], Response::HTTP_BAD_REQUEST);
+}
+
     
-    #[Route('/main/datostabla', name:'datos_tabla', methods: ['GET'])]
+    #[Route('/famosos/datostabla', name:'datos_tabla', methods: ['GET'])]
     public function verTabla(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $draw = $request->query->get('draw', 1);
@@ -78,7 +80,7 @@ public function index(EntityManagerInterface $entityManager): Response
                 'apellido' => $famoso->getApellido(),
                 'profesion' => $famoso->getProfesion(),
                 'editar' => '<button class="btn btn-primary editarBtn" data-bs-toggle="modal" data-bs-target="#editarModal" data-id="' . $famoso->getId() . '">Editar</button>',
-                'borrar' => '<a href="' . $this->generateUrl('famosos_delete', ['id' => $famoso->getId()]) . '" class="btn btn-danger" onclick="return confirmDelete(\'' . $famoso->getNombre() . '\')">Borrar</a>'
+                'borrar' => '<a href="#" data-id="' . $famoso->getId() . '" data-nombre="' . $famoso->getNombre() . '" class="btn btn-danger btnDelete">Borrar</a>'
             ];
         }
     
@@ -88,6 +90,6 @@ public function index(EntityManagerInterface $entityManager): Response
             'recordsFiltered' => $recordsFiltered,
             'data' => $data
         ]);
-    }
-    
+    }    
+
 }

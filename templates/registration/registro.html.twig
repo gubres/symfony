@@ -3,30 +3,45 @@
 {% block title %}Registro{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h2>Registro</h2>
-    {{ form_start(form, {'attr': {'id': 'miFormulario'}}) }}
-    
-    {{ form_row(form.email, {'label': 'Correo electrónico'}) }}
-    {{ form_row(form.plainPassword.first, {'label': 'Contraseña'}) }}
-    {{ form_row(form.plainPassword.second, {'label': 'Confirma tu contraseña'}) }}
-    
-    <button type="submit" class="btn btn-lg btn-primary">Registrar</button>
-    
-    {{ form_end(form) }}
-    
-   {% for message in app.flashes('error') %}
-    <div class="alert alert-danger">{{ message }}</div>
-    {% endfor %}
-    
-  
-    <div class="register">
-        ¿Ya tienes una cuenta? <a style="color:blue" href="{{ path('app_login') }}">Iniciar sesión</a>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="mb-3">Registro</h2>
+            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': ''}}) }}
+            
+            <div class="form-group">
+                {{ form_row(form.email, {
+                    'label': 'Correo electrónico',
+                    'attr': {'class': 'form-control'}
+                }) }}
+            </div>
+            
+            <div class="form-group">
+                {{ form_row(form.plainPassword.first, {
+                    'label': 'Contraseña',
+                    'attr': {'class': 'form-control'}
+                }) }}
+            </div>
+            
+            <div class="form-group mb-3">
+                {{ form_row(form.plainPassword.second, {
+                    'label': 'Confirma tu contraseña',
+                    'attr': {'class': 'form-control'}
+                }) }}
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block">Registrar</button>
+            
+            {{ form_end(form) }}
+            
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger">{{ message }}</div>
+            {% endfor %}
+            
+            <div class="mt-4">
+                ¿Ya tienes una cuenta? <a href="{{ path('app_login') }}" class="link-primary">Iniciar sesión</a>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

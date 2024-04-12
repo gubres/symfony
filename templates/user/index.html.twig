@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Usuarios{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mt-3 mb-5">LISTADO DE USUARIOS ✅</h1>
+    <table id="userTabla" class="table table-bordered">
+        <thead>
+            <tr>
+                <th class="text-center">ID</th>
+                <th class="text-center">Email</th>
+                <th class="text-center">Roles</th>
+            </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+            <tr>
+                <td class="text-center">{{ user.id }}</td>
+                <td class="text-center">{{ user.email }}</td>
+                <td class="text-center">{{ user.roles | join(', ') }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

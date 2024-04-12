@@ -1,27 +1,19 @@
-       <div>
-           {{ form_label(form.nombre) }}
-           {{ form_widget(form.nombre, {
-            'attr': {
-                'required': 'required'
-            }
-            }) }}
-
-        </div>
-
-        <div>
-            {{ form_label(form.apellido) }}
-            {{ form_widget(form.apellido, {'attr': {
-                'required': 'required'
-            }
-            }) }}
-        </div>
-
-        <div>
-            {{ form_label(form.profesion) }}
-            {{ form_widget(form.profesion, {'attr': {
-                'required': 'required'
-            }
-            }) }}
-        </div>
-
-
+<div class="mb-3">
+                            {{ form_row(form.nombre, {
+                                'label': 'Nombre',
+                                'attr': {'class': 'form-control'}
+                            }) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_row(form.apellido, {
+                                'label': 'Apellido',
+                                'attr': {'class': 'form-control'}
+                            }) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_row(form.profesion, {
+                                'label': 'Profesion',
+                                'attr': {'class': 'form-control'}
+                            }) }}
+                        </div>
+                 

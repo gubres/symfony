@@ -3,6 +3,12 @@ security:
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+    
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_ADMIN]
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+        ROLE_USER: [ROLE_USER]
+    
     providers:
         # used to reload user from session & other features (e.g. switch_user)
         app_user_provider:
@@ -21,11 +27,20 @@ security:
                 login_path: app_login
                 check_path: app_login
                 enable_csrf: true
-                default_target_path: /home
+                default_target_path: app_main
             logout:
                 path: app_logout
                 # where to redirect after logout
                 target: app_login
+            #custom_authenticator: App\Security\LoginFormAuthenticator
+
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800
+                path: /
+                # by default, the feature is enabled by checking a checkbox in the
+                # login form, uncomment the following line to always enable it.
+                #always_remember_me: true
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -39,7 +54,8 @@ security:
         - { path: ^app_register, roles:  }
         - { path: ^app_login, roles:   }
         - { path: ^/home, roles: ROLE_USER }
-        - { path: ^/main, roles: ROLE_USER } # Protege todas las rutas bajo /main
+        - { path: ^/famosos, roles: ROLE_USER }
+        - { path: ^/user, roles: ROLE_ADMIN }
 
 
 when@test:

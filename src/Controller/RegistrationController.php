@@ -25,12 +25,12 @@ class RegistrationController extends AbstractController
             $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $user->getEmail()]);
             if ($existingUser) {
 
-                // Agrega un mensaje de error al formulario
+                // mensaje de error al formulario en caso de que ya exista el correo en la BDD
                $this->addFlash('error', 'El correo electrónico ya está en uso. Elige otro');
                 return $this->redirectToRoute('app_register');
             }
 
-            // Copia la contraseña a un textoplano y la hashed
+            // copia la contraseña a un textoplano y la hashed
             $user->setPassword($passwordHasher->hashPassword($user, $form->get('plainPassword')->getData()));
             
             $entityManager->persist($user);
@@ -38,7 +38,7 @@ class RegistrationController extends AbstractController
             //aqui limpio la contraseña que estaba en el textoplano para no persistir 
             //a la base de datos
             $user->eraseCredentials();
-            // Redirige al usuario al inicio
+   
             return $this->redirectToRoute('app_login');
         }
         return $this->render('registration/registro.html.twig', [

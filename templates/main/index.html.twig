@@ -3,87 +3,80 @@
 {% block title %}FAMOSOS{% endblock %}
 
 {% block body %}
+<div class="container mt-4">
 
-<div class="example-wrapper">
-
-{% if is_granted('IS_AUTHENTICATED_FULLY') %}
-    <div class="flex justify-end">
-    <p>Bienvenido {{ app.user.email }}</p>
-    <form action="{{ path('app_logout') }}" method="post">
-        <button type="submit" class="btn btn-secondary">Logout</button>
-    </form>
-    </div>
+{% if is_granted('ROLE_ADMIN') %}
+    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#miModal">
+        Insertar Datos
+    </button>
 {% endif %}
 
+    {% block modales %}
+        {# Ventana Modal para insertar datos #}
+        <div class="modal fade" id="miModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">INSERIR FAMOSO✅</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                        <div class="modal-body">
+                        {{ form_start(form, {'attr': {'id': 'miFormulario', 'class': 'w-100'}}) }}
+                        
+                        {% include '/main/formulario.html.twig' %}
 
-{% block modales %}
-
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#miModal">
-    Insertar Datos
-</button>
-{# Ventana Modal con Formulario para insertar datos#}
-<div class="modal fade" id="miModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h3>INSERIR FAMOSO✅</h3>
-            </div>
-            <div class="modal-body">
-            {{ form_start(form, {
-                'attr': {
-                    'id': 'miFormulario'
-                    }}) }}          
-                    {% include '/main/formulario.html.twig' %}   
-            </div>
-            <div class="modal-footer">
-                <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" id="confirmarEnvio" class="btn btn-primary">Confirmar</button>
-               {{ form_end(form) }}
+                        {{ form_end(form) }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" id="confirmarEnvio" class="btn btn-primary">Confirmar</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
+        {# Ventana Modal para actualizar datos #}
+        <div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">EDITAR FAMOSO✅</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="editarModalBody">
 
-{# Ventana Modal con Formulario para actualizar datos #}
-<div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>EDITAR FAMOSO✅</h3>
-            </div>
-            <div class="modal-body" id="editarModalBody">
-                <form id="editarForm" action="javascript:void(0);" method="post">
-                    <input type="hidden" name="id" id="id_famoso">
-                    <div class="mb-3">
-                        <label for="inputNombre">Nombre</label>
-                        <input type="text" class="form-control" name="nombre" id="inputNombre" required>
+                     {% include '/main/editarForm.html.twig' %}
+
                     </div>
-                    <div class="mb-3">
-                        <label for="inputApellido">Apellido</label>
-                        <input type="text" class="form-control" name="apellido" id="inputApellido" required>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" form="editarForm" class="btn btn-primary">Confirmar</button>
                     </div>
-                    <div class="mb-3">
-                        <label for="inputProfesion">Profesion</label>
-                        <input type="text" class="form-control" name="profesion" id="inputProfesion" required>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" form="editarForm" class="btn btn-primary">Confirmar</button>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-<div class="modal-body">
-     {% include '/main/datostabla.html.twig' %}
-</div>
-{% endblock %}
+
+        <div class="modal-body">
+            {% include '/famosos/datostabla.html.twig' %}
+        </div>
+    {% endblock %}
 </div>
 
 {% endblock %}
 
+{% block style%}
+<style>
+/* Personalización de los botones de DataTables */
+.dataTables_wrapper .btn {
+    margin-right: 10px; /* Espaciado entre botones */
+}
+
+/* Estilos específicos para botones si es necesario */
+.dataTables_wrapper .btn-primary {
+    background-color: #0056b3; /* Ejemplo de color personalizado */
+}
+</style>
+{% endblock%}
 {% block javascripts %}
     {{ parent() }}
     <script>
@@ -176,11 +169,11 @@ $(document).ready(function() {
 
 
     $(document).ready(function() {
-    // Función para la inserción de un nuevo famoso
+    // función para la inserción de un nuevo famoso
     document.getElementById('confirmarEnvio').addEventListener('click', function (e) {
         e.preventDefault();
 
-        // Validación de los campos
+        // validación de los campos
         let nombre = $("#miModal form").find("input[name*='nombre']").val().trim();
         let apellido = $("#miModal form").find("input[name*='apellido']").val().trim();
         let profesion = $("#miModal form").find("input[name*='profesion']").val().trim();
@@ -220,98 +213,123 @@ $(document).ready(function() {
             mostrarModalConfirmacion('Error al enviar los datos. Por favor, intente nuevamente.');
         });
     });
-
-    // Otras funciones...
 });
 
-    function mostrarModalConfirmacion(mensaje) {
-        alert(mensaje); 
-    }
-
+    //evento para borrar un dato de famoso
+    $(document).ready(function() {
+    $(document).on('click', '.btnDelete', function(event){
+        event.preventDefault();
+        let id = $(this).data('id');
+        let nombre = $(this).data('nombre');
+        
+        if(confirmDelete(nombre)) {
+            $.ajax({
+            url: `/main/index/${id}`,
+            method: 'GET', 
+            success: function(response) {
+                if (response.success) {
+                    console.log('Famoso eliminado con éxito');
+                    $('#famososTabla').DataTable().ajax.reload(null, false);
+                } else {
+                    console.error('Error al eliminar el famoso');
+                }
+            },
+            error: function(error) {
+                console.error('Error al eliminar el famoso', error);
+            }
+        });
+        }
+    });
+});
 
     function confirmDelete(nombre) {
-    return confirm('¿Está seguro? Esta acción irá borrar el dato "' + nombre + '".');
-        }
-        window.addEventListener('DOMContentLoaded', (event) => {
-            const firstInput = document.querySelector('input');
-        });
-
-function configurarBotones() {
-    return [
-        {
-            extend: 'excelHtml5',
-            text: 'Exportar a Excel',
-            title: 'Datos de Famosos',
-            exportOptions: {
-                columns: [0, 1, 2, 3]
-            }
-        },
-        {
-            extend: 'pdfHtml5',
-            text: 'Exportar a PDF',
-            title: 'Datos de Famosos',
-            orientation: 'portrait',
-            pageSize: 'A4',
-            exportOptions: {
-                columns: [0, 1, 2, 3]
+        return confirm(`¿Está seguro? Esta acción irá borrar el dato "${nombre}".`);
+    };
+    function mostrarModalConfirmacion(mensaje) {
+        alert(mensaje); 
+    };
+    function configurarBotones() {
+        return [
+            {
+                extend: 'excelHtml5',
+                text: '<i class="fas fa-file-excel"></i> Exportar a Excel',
+                className: 'btn btn-success',
+                title: 'Datos de Famosos',
+                exportOptions: {
+                    columns: [0, 1, 2, 3]
+                }
             },
-            customize: function(doc) {
-                // Centrar la tabla en la página PDF
-                var docContent = doc.content[1];
-                docContent.margin = [ 0, 0, 0, 0 ]; // [left, top, right, bottom]
-                docContent.table.widths = Array(docContent.table.body[0].length + 1).join('*').split('');
-                // En ese apartado se puede ajustar para cambiar la posición de la tabla horizontalmente
-                docContent.layout = {
-                    hLineWidth: function(i, node) {
-                        return 0.5;
-                    },
-                    vLineWidth: function(i, node) {
-                        return 0.5;
-                    },
-                    hLineColor: function(i, node) {
-                        return '#aaa';
-                    },
-                    vLineColor: function(i, node) {
-                        return '#aaa';
-                    },
-                    paddingLeft: function(i, node) {
-                        return 4;
-                    },
-                    paddingRight: function(i, node) {
-                        return 4;
-                    },
-                    paddingTop: function(i, node) {
-                        return 2;
-                    },
-                    paddingBottom: function(i, node) {
-                        return 2;
-                    }
-                };
+            {
+                extend: 'pdfHtml5',
+                text: '<i class="fas fa-file-pdf"></i> Exportar a PDF',
+                className: 'btn btn-danger',
+                title: 'Datos de Famosos',
+                orientation: 'portrait',
+                pageSize: 'A4',
+                exportOptions: {
+                    columns: [0, 1, 2, 3]
+                },
+                customize: function(doc) {
+                    // Centrar la tabla en la página PDF
+                    var docContent = doc.content[1];
+                    docContent.margin = [ 0, 0, 0, 0 ]; // [left, top, right, bottom]
+                    docContent.table.widths = Array(docContent.table.body[0].length + 1).join('*').split('');
+                    // En ese apartado se puede ajustar para cambiar la posición de la tabla horizontalmente
+                    docContent.layout = {
+                        hLineWidth: function(i, node) {
+                            return 0.5;
+                        },
+                        vLineWidth: function(i, node) {
+                            return 0.5;
+                        },
+                        hLineColor: function(i, node) {
+                            return '#aaa';
+                        },
+                        vLineColor: function(i, node) {
+                            return '#aaa';
+                        },
+                        paddingLeft: function(i, node) {
+                            return 4;
+                        },
+                        paddingRight: function(i, node) {
+                            return 4;
+                        },
+                        paddingTop: function(i, node) {
+                            return 2;
+                        },
+                        paddingBottom: function(i, node) {
+                            return 2;
+                        }
+                    };
+                }
+            },
+            {
+                extend: 'print',
+                text: '<i class="fas fa-print"></i> Imprimir',
+                className: 'btn btn-info',
+                title: 'Datos de Famosos',
+                exportOptions: {
+                    columns: [0, 1, 2, 3]
+                }
+            },
+            {
+                extend: 'copy',
+                text: '<i class="fas fa-copy"></i> Copiar',
+                className: 'btn btn-primary',
+                exportOptions: {
+                    columns: [0, 1, 2, 3]
+                }
             }
-        },
-        {
-            extend: 'print',
-            text: 'Imprimir',
-            title: 'Datos de Famosos',
-            exportOptions: {
-                columns: [0, 1, 2, 3]
-            }
-        },
-        {
-            extend: 'copy',
-            text: 'Copiar',
-            exportOptions: {
-                columns: [0, 1, 2, 3]
-            }
-        }
-    ];
-}
+        ];
+    }
 
 
 $(document).ready(function() {
      $('#famososTabla').DataTable({
         "processing": true,
         "serverSide": true,
+        "responsive": true, // Hace que la tabla sea responsive
+        "autoWidth": false, // Deshabilita el ajuste automático del ancho de columnas
         "ajax": "{{ path('datos_tabla') }}",
         "columns": [
             { "data": "id" },
@@ -323,7 +341,7 @@ $(document).ready(function() {
             ],
         language: {
             url: '//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json'
-        },  dom: '<"top"lBf>rt<"bottom"ip><"clear">',
+        },  dom: '<"row"<"col-sm-3"l><"col-sm-5"B><"col-sm-3"f>>rt<"row"<"col-sm-7"p><"col-sm-5"i>>',
         buttons: configurarBotones()
     });
 
@@ -343,5 +361,3 @@ $(document).ready(function() {
 
     </script>
 {% endblock %}
-
-

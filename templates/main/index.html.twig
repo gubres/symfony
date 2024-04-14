@@ -25,12 +25,14 @@
                         
                         {% include '/main/formulario.html.twig' %}
 
-                        {{ form_end(form) }}
+                     
                     </div>
                     <div class="modal-footer">
                         <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" id="confirmarEnvio" class="btn btn-primary">Confirmar</button>
+                        
                     </div>
+                       {{ form_end(form) }}
                 </div>
             </div>
         </div>
@@ -156,16 +158,12 @@ $(document).ready(function() {
 
 
     $(document).ready(function() {
-    // función para la inserción de un nuevo famoso
-    document.getElementById('confirmarEnvio').addEventListener('click', function (e) {
+    $('#miFormulario').on('submit', function(e) {
         e.preventDefault();
 
-        // validación de los campos
-        let nombre = $("#miModal form").find("input[name*='nombre']").val().trim();
-        let apellido = $("#miModal form").find("input[name*='apellido']").val().trim();
-        let profesion = $("#miModal form").find("input[name*='profesion']").val().trim();
-
-        // regex para validar que los campos contengan solo letras y espacios
+        let nombre = $("input[name*='nombre']").val().trim();
+        let apellido = $("input[name*='apellido']").val().trim();
+        let profesion = $("input[name*='profesion']").val().trim();
         let regex = /^[A-Za-z\s]+$/;
 
         if (!nombre || !apellido || !profesion) {
@@ -178,7 +176,7 @@ $(document).ready(function() {
             return;
         }
 
-        const formData = new FormData(document.querySelector('#miModal form'));
+        const formData = new FormData(this);
 
         fetch('{{ path("form_datos") }}', {
             method: 'POST',
@@ -186,8 +184,8 @@ $(document).ready(function() {
         })
         .then(response => response.json())
         .then(data => {
-            if(data.success) {
-                $('#miModal').modal('hide'); 
+            if (data.success) {
+                $('#miModal').modal('hide');
                 mostrarModalConfirmacion('Los datos han sido enviados exitosamente.');
                 $('#famososTabla').DataTable().ajax.reload();
             } else {
@@ -201,6 +199,7 @@ $(document).ready(function() {
         });
     });
 });
+
 
     //evento para borrar un dato de famoso
     $(document).ready(function() {
@@ -327,7 +326,7 @@ $(document).ready(function() {
             { "data": "borrar", "orderable": false }
             ],
         language: {
-            url: '//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json'
+            'url': 'https://cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json'
         },  dom: '<"row"<"col-sm-3"l><"col-sm-5"B><"col-sm-3"f>>rt<"row"<"col-sm-7"p><"col-sm-5"i>>',
         buttons: configurarBotones()
     });

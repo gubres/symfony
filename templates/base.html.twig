@@ -75,7 +75,7 @@
     {% block header %}
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{{ path('app_main') }}">Famosos</a>
+            <a class="navbar-brand mx-3" href="{{ path('app_main') }}">Famosos</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -99,6 +99,10 @@
                         <button type="submit" class="btn btn-outline-secondary">Logout</button>
                     </form>
                 </div>
+                {% else %}
+                 <div class="nav-item m-3 mx-5">
+                        <a class="nav-link active" aria-current="page" href="{{ path('app_login') }}">Login</a>
+                    </div>
                 {% endif %}
             </div>
         </div>

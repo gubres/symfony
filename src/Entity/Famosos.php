@@ -8,6 +8,7 @@ use DateTime;
 use DateTimeZone;
 use DateTimeImmutable;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\User;
 
 
 
@@ -28,15 +29,15 @@ class Famosos
         pattern: "/^[A-Za-z\s]+$/",
         message: "El nombre solo puede contener letras y espacios"
     )]
-     private ?string $nombre = null;
+    private ?string $nombre = null;
 
-     #[ORM\Column(length: 30)]
-     #[Assert\NotBlank(message: "El campo no puede estar vacío")]
-     #[Assert\Regex(
+    #[ORM\Column(length: 30)]
+    #[Assert\NotBlank(message: "El campo no puede estar vacío")]
+    #[Assert\Regex(
         pattern: "/^[A-Za-z\s]+$/",
         message: "El apellido solo puede contener letras y espacios"
-     )]
-      private ?string $apellido = null;
+    )]
+    private ?string $apellido = null;
 
     #[ORM\Column(length: 30)]
     #[Assert\NotBlank(message: "El campo no puede estar vacío")]
@@ -49,16 +50,21 @@ class Famosos
 
     #[ORM\Column]
     private ?bool $eliminado = false;
-    
+
     #[ORM\Column(type: 'datetime')]
     private ?DateTime $modificado = null;
-    
+
     #[ORM\Column]
     private ?DateTimeImmutable $creado = null;
-    
-      public function __construct()
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'famososCreated')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $createdBy = null;
+
+
+    public function __construct()
     {
-        $zonaHoraria = new DateTimeZone('Europe/Madrid'); 
+        $zonaHoraria = new DateTimeZone('Europe/Madrid');
         $this->creado = new DateTimeImmutable('now', $zonaHoraria);
         $this->modificado = new DateTime('now', $zonaHoraria);
         $this->eliminado = false;
@@ -110,7 +116,7 @@ class Famosos
         return $this->eliminado;
     }
 
-    public function setEliminado  (bool $eliminado): self
+    public function setEliminado(bool $eliminado): self
     {
         $this->eliminado = $eliminado;
 
@@ -122,7 +128,7 @@ class Famosos
         return $this->modificado;
     }
 
-    public function setModificado ( DateTime $modificado): self
+    public function setModificado(DateTime $modificado): self
     {
         $this->modificado = $modificado;
 
@@ -135,10 +141,20 @@ class Famosos
     }
 
 
-    public function setCreado (DateTimeImmutable $creado): self
+    public function setCreado(DateTimeImmutable $creado): self
     {
         $this->creado = $creado;
 
+        return $this;
+    }
+    public function getCreatedBy(): ?User
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?User $createdBy): self
+    {
+        $this->createdBy = $createdBy;
         return $this;
     }
 }

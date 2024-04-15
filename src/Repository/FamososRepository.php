@@ -2,9 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\User;
 use App\Entity\Famosos;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * @extends ServiceEntityRepository<Famosos>
@@ -21,9 +23,18 @@ class FamososRepository extends ServiceEntityRepository
         parent::__construct($registry, Famosos::class);
     }
 
-       /**
-        * @return Famosos[] Returns an array of Famosos objects
-        */
+    public function findByUser(User $user)
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.createdBy = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return Famosos[] Returns an array of Famosos objects
+     */
     public function findNotDeleted(): array
     {
         return $this->createQueryBuilder('f')
@@ -33,64 +44,54 @@ class FamososRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findNotDeletedWithCriteria($start, $length, $search, $order)
+    public function findByUserWithPagination(User $user, $start, $length, $search, $order)
+    {
+        return $this->getFilteredQuery($user, $search, $order)
+            ->setFirstResult($start)
+            ->setMaxResults($length)
+            ->getQuery()
+            ->getResult();
+    }
+
+    private function getFilteredQuery(User $user, $search, $order): QueryBuilder
     {
         $qb = $this->createQueryBuilder('f')
-                   ->where('f.eliminado = :eliminado')
-                   ->setParameter('eliminado', false);
-    
+            ->where('f.createdBy = :user')
+            ->setParameter('user', $user)
+            ->andWhere('f.eliminado = :eliminado')
+            ->setParameter('eliminado', false);
+
         if ($search) {
             $qb->andWhere('f.nombre LIKE :search OR f.apellido LIKE :search OR f.profesion LIKE :search')
-               ->setParameter('search', '%' . $search . '%');
-        }
-    
-        // Mapeo de las columnas de DataTables a las propiedades de la entidad
-    $columnsMap = [
-        0 => 'f.id', // '0' es el índice de la columna para 'id'
-        1 => 'f.nombre', // '1' es el índice de la columna para 'nombre'
-        2 => 'f.apellido', // '2' es el indice de la columna para 'apellido'
-        3 => 'f.profesion', // '3' es el índice de la columna para 'profesion'
-    ];
-
-    // los índices 'column' y 'dir' para definir el orden
-    if(isset($order['column']) && isset($order['dir'])) {
-        // con la estructura abajo se obtiene el campo de la entidad por el cual ordenar basado en el índice de la columna
-        $orderColumn = array_key_exists($order['column'], $columnsMap) ? $columnsMap[$order['column']] : 'f.id';
-        
-        //pasar la ordenacion al constructor de la query
-        $qb->orderBy($orderColumn, $order['dir']);
-    }
-    
-        $qb->setFirstResult($start)->setMaxResults($length);
-    
-        return $qb->getQuery()->getResult();
-    }
-    
-        public function countFilteredNotDeleted($search)
-        {
-            $qb = $this->createQueryBuilder('f')
-                    ->select('COUNT(f.id)')
-                    ->where('f.eliminado = :eliminado')
-                    ->setParameter('eliminado', false);
-    
-            if ($search) {
-                $qb->andWhere('f.nombre LIKE :search OR f.apellido LIKE :search OR f.profesion LIKE :search')
                 ->setParameter('search', '%' . $search . '%');
-            }
-    
-            return $qb->getQuery()->getSingleScalarResult();
         }
-    
-        public function countNotDeleted()
-        {
-            return $this->createQueryBuilder('f')
-                        ->select('COUNT(f.id)')
-                        ->where('f.eliminado = :eliminado')
-                        ->setParameter('eliminado', false)
-                        ->getQuery()
-                        ->getSingleScalarResult();
+
+        if (isset($order['column']) && isset($order['dir'])) {
+            $columnsMap = [
+                0 => 'f.id',
+                1 => 'f.nombre',
+                2 => 'f.apellido',
+                3 => 'f.profesion',
+            ];
+            $orderColumn = $columnsMap[$order['column']] ?? 'f.id';
+            $qb->orderBy($orderColumn, $order['dir']);
         }
-    
+
+        return $qb;
+    }
+
+    public function countNotDeletedByUser(User $user)
+    {
+        return $this->createQueryBuilder('f')
+            ->select('COUNT(f.id)')
+            ->where('f.createdBy = :user')
+            ->andWhere('f.eliminado = :eliminado')
+            ->setParameter('user', $user)
+            ->setParameter('eliminado', false)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
     //    public function findByExampleField($value): array
     //    {
     //        return $this->createQueryBuilder('f')

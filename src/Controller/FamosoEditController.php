@@ -1,7 +1,9 @@
-<?php 
+<?php
+
 namespace App\Controller;
 
 use App\Entity\Famosos;
+use App\Form\FamososType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +18,7 @@ class FamosoEditController extends AbstractController
     #[Route('/editar/{id}', name: 'famosos_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Famosos $famoso, EntityManagerInterface $entityManager): Response
     {
-        
+
         if ($request->isMethod('POST')) {
             $nombre = $request->request->get('nombre');
             $apellido = $request->request->get('apellido');
@@ -26,7 +28,6 @@ class FamosoEditController extends AbstractController
             $famoso->setApellido($apellido);
             $famoso->setProfesion($profesion);
             $famoso->setModificado(new DateTime('now', new DateTimeZone('Europe/Madrid')));
-
             $entityManager->persist($famoso);
             $entityManager->flush();
 
@@ -36,16 +37,16 @@ class FamosoEditController extends AbstractController
         return new JsonResponse(['success' => false, 'message' => 'Método no permitido'], Response::HTTP_METHOD_NOT_ALLOWED);
     }
 
-    #[Route('/info/{id}', name: 'famosos_info', methods: ['GET'])]
-        public function getFamosoInfo(Famosos $famoso): JsonResponse
-        {
-            // Devuelve los datos del famoso en formato JSON
-            return new JsonResponse([
-                'id' => $famoso->getId(),
-                'nombre' => $famoso->getNombre(),
-                'apellido' => $famoso->getApellido(),
-                'profesion' => $famoso->getProfesion(),
-            ]);
-}
 
+    #[Route('/info/{id}', name: 'famosos_info', methods: ['GET'])]
+    public function getFamosoInfo(Famosos $famoso): JsonResponse
+    {
+        // devuelve los datos del famoso en formato JSON
+        return new JsonResponse([
+            'id' => $famoso->getId(),
+            'nombre' => $famoso->getNombre(),
+            'apellido' => $famoso->getApellido(),
+            'profesion' => $famoso->getProfesion(),
+        ]);
+    }
 }

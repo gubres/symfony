@@ -19,12 +19,12 @@ class DeleteController extends AbstractController
     #[Route('main/index/{id}', name: 'famosos_delete', methods: ['GET'])]
     public function delete(Request $request, Famosos $famoso, EntityManagerInterface $entityManager): Response
     {
-    // establece el campo 'eliminado' a true, eliminado logico
-    $famoso->setEliminado(true);
-    //cambia el campo modificado con la fecha actual
-    $famoso->setModificado(new DateTime('now', new DateTimeZone('Europe/Madrid')));
-    $entityManager->flush();
+        // establece el campo 'eliminado' a true (eliminado logico)
+        $famoso->setEliminado(true);
+        //cambia el campo modificado con la fecha actual
+        $famoso->setModificado(new DateTime('now', new DateTimeZone('Europe/Madrid')));
+        $entityManager->flush();
 
-    return new JsonResponse(['success' => true]);
+        return new JsonResponse(['success' => true]);
     }
 }

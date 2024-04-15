@@ -6,6 +6,8 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -35,6 +37,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string|null contraseña plana no sigue para la base de datos
      */
     private ?string $plainPassword = null;
+
+    #[ORM\Column]
+    private ?bool $eliminado = false;
+
+    #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Famosos::class)]
+    private Collection $famososCreated;
+
+    public function __construct()
+    {
+        $this->famososCreated = new ArrayCollection();
+    }
+
 
     public function getId(): ?int
     {
@@ -121,5 +135,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         //limpia datos temporales de la memoria
         $this->plainPassword = null;
+    }
+    public function getFamososCreated(): Collection
+    {
+        return $this->famososCreated;
+    }
+
+    public function isEliminado(): bool
+    {
+        return $this->eliminado;
+    }
+
+    public function setEliminado(bool $eliminado): self
+    {
+        $this->eliminado = $eliminado;
+        return $this;
     }
 }

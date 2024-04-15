@@ -20,19 +20,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
     /**
-     * @var list<string> The user roles
+     * @var list<string> roles del user
      */
     #[ORM\Column]
     private array $roles = [];
 
     /**
-     * @var string The hashed password
+     * @var string contraseña hasheada
      */
     #[ORM\Column]
     private ?string $password = null;
 
-     /**
-     * @var string|null The plain password, not persisted in the database
+    /**
+     * @var string|null contraseña plana no sigue para la base de datos
      */
     private ?string $plainPassword = null;
 
@@ -54,7 +54,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * A visual identifier that represents this user.
+     * Identificaçao visual que representa el user.
      *
      * @see UserInterface
      */
@@ -71,7 +71,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
+        //garantizar que cada usuario tenga el role ROLE_USER asignado
         $roles[] = "ROLE_USER";
 
         return array_unique($roles);
@@ -116,7 +116,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    // El método eraseCredentials modificado para incluir plainPassword
+    // el método eraseCredentials modificado para incluir plainPassword
     public function eraseCredentials(): void
     {
         //limpia datos temporales de la memoria

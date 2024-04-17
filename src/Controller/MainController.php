@@ -2,18 +2,17 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Famosos;
-use App\Entity\User;
 use App\Form\FamososType;
-use Symfony\Component\HttpFoundation\Request;
+use App\Repository\FamososRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Repository\FamososRepository;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
 
@@ -32,7 +31,6 @@ class MainController extends AbstractController
     #[Route('/home', name: 'app_main')]
     public function index(EntityManagerInterface $entityManager): Response
     {
-        // Aquí se usa directamente el repositorio inyectado.
         $famosos = $entityManager->getRepository(Famosos::class)->findNotDeleted();
         $famoso = new Famosos();
         $form = $this->createForm(FamososType::class, $famoso);
@@ -48,7 +46,7 @@ class MainController extends AbstractController
     {
         $user = $this->security->getUser();
         if (!$user) {
-            // Redirige o maneja casos donde el usuario no está autenticado
+            // error si el usuario no está autenticado
             throw $this->createAccessDeniedException('No estás autorizado para realizar esta acción.');
         }
 
@@ -94,7 +92,7 @@ class MainController extends AbstractController
         // método que incluye filtros y paginación
         $famosos = $this->famososRepository->findByUserWithPagination($user, $start, $length, $search, $order);
         $recordsTotal = $this->famososRepository->countNotDeletedByUser($user);
-        $recordsFiltered = $recordsTotal; // Si aplicas otros filtros actualiza este valor.
+        $recordsFiltered = $recordsTotal;
 
         $data = array_map(function ($famoso) {
             return [

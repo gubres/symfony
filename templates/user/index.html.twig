@@ -35,7 +35,7 @@
   $(document).ready(function() {
     var userTabla = $('#userTabla').DataTable({
         "processing": true,
-        "serverSide": false,  // Asegúrate de ajustar esto según la configuración de tu servidor
+        "serverSide": false,
         "ajax": {
             "url": "{{ path('user_data') }}",
             "type": "GET"
@@ -57,10 +57,10 @@
     $('#userTabla tbody').on('click', 'button', function() {
         var data = userTabla.row($(this).parents('tr')).data();
         if($(this).hasClass('edit-button')) {
-            // Llenar el formulario de edición con los datos
+            // llenar el formulario de edición con los datos
             $('#editModal').modal('show');
         } else if($(this).hasClass('delete-button')) {
-            // Preparar y mostrar modal de confirmación de eliminación
+            // preparar y mostrar modal de confirmación de eliminación
             $('#deleteModal').modal('show');
         }
     });

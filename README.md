@@ -14,4 +14,4 @@ PASO A PASO
 8. Hecho eso, comprobar que se ha creado la base de datos y sus tablas
 9. argar en la base de datos el usuario que esta creado en la fixture usando el comando: php bin/console doctrine:fixtures:load --no-interaction (para saber los datos de login basta acceder a appfixtures en los archivos)
 10. Si todo correcto, ejecutar el servidor: symfony server:start
-    Abrir el navegador en la direccion que informa la consola: 127.0.0.1:8000
+11. Abrir el navegador en la direccion que informa la consola: 127.0.0.1:8000
